@@ -1,5 +1,6 @@
 package com.octaviookumu.producer.controllers;
 
+import com.octaviookumu.producer.domain.RiderLocation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.web.bind.annotation.*;
@@ -9,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class KafkaController {
 
-    private final KafkaTemplate<String, String> kafkaTemplate;
+    private final KafkaTemplate<String, RiderLocation> kafkaTemplate;
 
     /**
      * Does the job of producing messages
@@ -19,7 +20,12 @@ public class KafkaController {
      */
     @PostMapping("/send")
     public String sendMessage(@RequestParam String message) {
-        kafkaTemplate.send("my-topic", message);
-        return "Message Sent: " + message;
+        RiderLocation riderLocation = RiderLocation.builder()
+                .riderId("rider123")
+                .latitude(28.61)
+                .longitude(77.23)
+                .build();
+        kafkaTemplate.send("my-topic-new", riderLocation);
+        return "Message Sent: " + riderLocation.getRiderId();
     }
 }
